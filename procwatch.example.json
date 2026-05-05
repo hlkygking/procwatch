@@ -1,0 +1,35 @@
+{
+  "processes": [
+    {
+      "name": "web-server",
+      "command": "/usr/local/bin/myapp",
+      "args": ["--port", "8080", "--config", "/etc/myapp/config.yaml"],
+      "restart_policy": "on-failure",
+      "max_restarts": 5,
+      "restart_delay": 2000000000,
+      "env": [
+        "APP_ENV=production",
+        "LOG_LEVEL=info"
+      ]
+    },
+    {
+      "name": "worker",
+      "command": "/usr/local/bin/myworker",
+      "args": ["--queue", "default"],
+      "restart_policy": "always",
+      "max_restarts": 0,
+      "restart_delay": 1000000000,
+      "env": [
+        "APP_ENV=production"
+      ]
+    },
+    {
+      "name": "migrate",
+      "command": "/usr/local/bin/migrate",
+      "args": ["--up"],
+      "restart_policy": "never",
+      "max_restarts": 0,
+      "restart_delay": 0
+    }
+  ]
+}
