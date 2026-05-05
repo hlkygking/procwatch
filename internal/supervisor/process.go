@@ -29,11 +29,11 @@ type ProcessConfig struct {
 
 // Process represents a supervised process.
 type Process struct {
-	cfg         ProcessConfig
-	cmd         *exec.Cmd
-	restarts    int
-	mu          sync.Mutex
-	logger      Logger
+	cfg      ProcessConfig
+	cmd      *exec.Cmd
+	restarts int
+	mu       sync.Mutex
+	logger   Logger
 }
 
 // NewProcess creates a new supervised Process.
@@ -94,6 +94,13 @@ func (p *Process) Run(ctx context.Context) error {
 			return ctx.Err()
 		}
 	}
+}
+
+// Restarts returns the number of times the process has been restarted.
+func (p *Process) Restarts() int {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.restarts
 }
 
 func (p *Process) shouldRestart(err error) bool {
