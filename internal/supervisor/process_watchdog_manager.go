@@ -78,3 +78,12 @@ func (m *ProcessWatchdogManager) Names() []string {
 	}
 	return names
 }
+
+// Has returns true if a watchdog is currently registered for the given process name.
+func (m *ProcessWatchdogManager) Has(name string) bool {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	_, ok := m.dogs[name]
+	return ok
+}
