@@ -92,3 +92,21 @@ func TestProcessOutputCapture_OverflowKeepsLatest(t *testing.T) {
 		t.Errorf("expected last line to be 'line 4', got %q", lines[len(lines)-1])
 	}
 }
+
+func TestProcessOutputCapture_ResetAllowsReuse(t *testing.T) {
+	c := NewProcessOutputCapture(10)
+
+	fmt.Fprintln(c.StdoutWriter(), "before reset")
+	c.Reset()
+
+	// Write new lines after reset and verify only new content is present.
+	fmt.Fprintln(c.StdoutWriter(), "after reset")
+
+	lines := c.Stdout()
+	if len(lines) != 1 {
+		t.Fatalf("expected 1 stdout line after reset and reuse, got %d", len(lines))
+	}
+	if lines[0] != "after reset" {
+		t.Errorf("expected 'after reset', got %q", lines[0])
+	}
+}
