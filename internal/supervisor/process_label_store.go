@@ -35,6 +35,18 @@ func (s *ProcessLabelStore) Get(process string) (*LabelSet, bool) {
 	return ls, ok
 }
 
+// Delete removes the LabelSet for a process from the store.
+// It returns true if the process was found and removed, false otherwise.
+func (s *ProcessLabelStore) Delete(process string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, ok := s.labels[process]; !ok {
+		return false
+	}
+	delete(s.labels, process)
+	return true
+}
+
 // All returns clones of all LabelSets in the store.
 func (s *ProcessLabelStore) All() []*LabelSet {
 	s.mu.RLock()
