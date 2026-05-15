@@ -44,3 +44,18 @@ func (r *ProcessCheckpointReporter) PrintJSON() error {
 	enc.SetIndent("", "  ")
 	return enc.Encode(entries)
 }
+
+// PrintSummary writes a concise per-process checkpoint count summary.
+func (r *ProcessCheckpointReporter) PrintSummary() {
+	entries := r.log.All()
+	counts := make(map[string]int)
+	for _, e := range entries {
+		counts[e.Process]++
+	}
+	tw := tabwriter.NewWriter(r.writer, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(tw, "PROCESS\tCHECKPOINTS")
+	for process, count := range counts {
+		fmt.Fprintf(tw, "%s\t%d\n", process, count)
+	}
+	tw.Flush()
+}
